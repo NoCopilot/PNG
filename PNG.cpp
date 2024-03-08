@@ -47,52 +47,39 @@ bool PNG::load(uint8_t* buffer, size_t size)
 		buffer++;
 	}
 	size_t k = 8;
-	std::cout << "---------------------------------------------------------------------\n";
+	
 	while(k < size)
 	{
 		Chunk chunk;
-		std::cout << "chunk size: ";
 		for(int i = 3; i >= 0; i--)
 		{
 			chunk.length += (*buffer) << (i*8);
 			buffer++;
 		}
-		std::cout << chunk.length << "\n";		
 		
-		std::cout << "chunk type: ";
 		for(int i = 0; i < 4; i++)
 		{
 			chunk.type[i] = (uint8_t)*buffer;
-			std::cout << chunk.type[i];
 			buffer++;
 		}
-		std::cout << "\n";
 		
-		std::cout << "chunk data: ";
 		chunk.data = new uint8_t[chunk.length];
 		for(size_t i = 0; i < chunk.length; i++)
 		{
 			chunk.data[i] = *buffer;
-			std::cout << hex(chunk.data[i], 2) << " ";
 			buffer++;
 		}
-		std::cout << "\n";
 		
-		std::cout << "CRC: ";
 		for(int i = 0; i < 4; i++)
 		{
 			chunk.crc[i] = *buffer;
-			std::cout << hex(chunk.crc[i]);
 			buffer++;
 		}
-		std::cout << "\n";
 		
 		k += 12 + chunk.length;
 		
 		chunks.push_back(chunk);
 		if(chunk.type == (uint8_t*)"IEND") break;
-		
-		std::cout << "---------------------------------------------------------------------\n";
 	}
 	
 	if(std::memcmp(chunks[0].type, "IHDR", 4) != 0)
@@ -121,8 +108,6 @@ bool PNG::load(uint8_t* buffer, size_t size)
 	compression_method = chunks[0].data[10];
 	filter_method = chunks[0].data[11];
 	interlace_method = chunks[0].data[12];
-	
-	
 	
 	return true;
 }
